@@ -36,6 +36,12 @@ if test `grep .local/bin ~/.bash_profile  -c` = 0 ; then
     printf '\nPATH=$HOME/.local/bin:$PATH\n' >> ~/.bash_profile
 fi
 
+# add node_modules to $PATH
+if test `grep .local/bin ~/.bash_profile  -c` = 0 ; then
+    printf '\n# node_modules to $PATH\n' >> ~/.bash_profile
+    printf '\nPATH=$HOME/node_modules/.bin:$PATH\n' >> ~/.bash_profile
+fi
+
 # create symlinks
 if test -f ~/.local/bin/node ; then
     rm ~/.local/bin/node
