@@ -5,8 +5,28 @@ tempdir=~/node_tmp_`date +%Y%m%d%H%M%S`
 mkdir $tempdir
 cd $tempdir
 
-# retrieve latest nodejs binary for linux 64-bit
 wget http://nodejs.org/download/
+# retrieve version number and confirm update
+version_num=`egrep 'Current version:' index.html | cut -d'v' -f3 | cut -d'<' -f1`
+echo "The latest version is: $version_num"
+if test `which node | wc -l` -gt 0 ; then
+    echo "You currently have `node -v` installed."
+    while true ; do
+        read -p "Upgrade? [y/n] " yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) 
+                cd $curdir
+                rm -rf $tempdir 
+                exit;;
+            * ) echo "Please answer y or n";;
+        esac
+    done
+fi
+echo "Installing node version $version_num..."
+
+
+# retrieve latest nodejs binary for linux 64-bit
 archive_url=`egrep 'linux-x64.tar.gz' index.html | cut -d'"' -f2`
 wget $archive_url
 archive=`echo $archive_url | cut -d'/' -f6`
@@ -43,10 +63,10 @@ if test `grep .local/bin ~/.bash_profile  -c` = 0 ; then
 fi
 
 # create symlinks
-if test -f ~/.local/bin/node ; then
+if test -h ~/.local/bin/node ; then
     rm ~/.local/bin/node
 fi
-if test -f ~/.local/bin/npm ; then
+if test -h ~/.local/bin/npm ; then
     rm ~/.local/bin/npm
 fi
 ln -s $HOME/.local/$dirname/bin/node ~/.local/bin/node
